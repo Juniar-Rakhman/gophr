@@ -17,7 +17,7 @@ var layout = template.Must(
 	template.
 	New("layout.html").
 	Funcs(layoutFuncs).
-	ParseFiles("template/layout.html"),
+	ParseFiles("templates/layout.html"),
 )
 
 //Must: returns the template if it's valid otherwise panic.
@@ -32,8 +32,10 @@ var errorTemplate = `
 </html>
 `
 
+//this will override layout and replace {{yield}} with name
 func RenderTemplate(w http.ResponseWriter, r *http.Request, name string, data interface{}) {
 
+	//TODO: replace funcs with something more meaningful
 	funcs := template.FuncMap{
 		"yield": func() (template.HTML, error) {
 			buf := bytes.NewBuffer(nil)
@@ -42,6 +44,8 @@ func RenderTemplate(w http.ResponseWriter, r *http.Request, name string, data in
 		},
 	}
 
+	//2 request might come in at the same time, pointing to the same layout.
+	//so use separate layout to execute
 	layoutClone, _ := layout.Clone()
 	layoutClone.Funcs(funcs)
 	err := layoutClone.Execute(w, data)

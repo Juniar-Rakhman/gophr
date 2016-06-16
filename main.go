@@ -2,6 +2,7 @@ package main
 
 import "net/http"
 
+
 func main() {
 	mux := http.NewServeMux()
 
@@ -9,10 +10,7 @@ func main() {
 		RenderTemplate(w, r, "index/home", nil)
 	})
 
-	mux.Handle(
-		"/assets/",
-		http.StripPrefix("/assets/", http.FileServer(http.Dir("assets/"))),
-	)
+	mux.Handle("/assets/", http.StripPrefix("/assets/", http.FileServer(http.Dir("assets/"))))
 
 	http.ListenAndServe(":3000", mux)
 }
